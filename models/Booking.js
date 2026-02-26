@@ -1,0 +1,27 @@
+const mongoose = require('mongoose');
+
+const BookingSchema = new mongoose.Schema({
+    bookingDate: {
+        type: Date,
+        required: true,
+        // กำหนด Constraint ช่วงเวลาตามโจทย์
+        min: ['2022-05-10', 'Booking date must be on or after May 10th, 2022'],
+        max: ['2022-05-13', 'Booking date must be on or before May 13th, 2022']
+    },
+    user:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    company:{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Company',
+        required: true
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+module.exports = mongoose.model('Booking', BookingSchema);
