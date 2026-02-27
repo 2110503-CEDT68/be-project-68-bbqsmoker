@@ -3,9 +3,9 @@ const {protect, authorize} = require('../middleware/auth');
 const {getCompanies, getCompany, createCompany, updateCompany, deleteCompany} = require('../controllers/companies');
 const bookingRouter = require('./bookings');
 const router = express.Router();
-router.use('/:companyId/bookings/', bookingRouter);
+router.use('/:id/bookings/', bookingRouter);
 router.route('/').get(getCompanies).post(protect, authorize('admin'), createCompany);
-router.route('/:companyId').get(protect, getCompany).put(protect, authorize('admin'), updateCompany).delete(protect, authorize('admin'), deleteCompany);
+router.route('/:id').get(protect, getCompany).put(protect, authorize('admin'), updateCompany).delete(protect, authorize('admin'), deleteCompany);
 module.exports = router
 /**
 * @swagger

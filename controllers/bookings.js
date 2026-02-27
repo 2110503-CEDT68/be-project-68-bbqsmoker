@@ -8,19 +8,19 @@ exports.getBookings = async (req, res, next) => {
     if(req.user.role !== 'admin'){
         query = Booking.find({ user: req.user.id }).populate({
             path: 'company',
-            select: 'name province tel'
+            select: 'name address telephone_number website description'
         });
     } else{
-        if(req.params.companyId){
-            console.log(req.params.companyId);
-            query = Booking.find({ company: req.params.companyId }).populate({
+        if(req.params.id){
+            console.log(req.params.id);
+            query = Booking.find({ company: req.params.id }).populate({
                 path: 'company',
-                select: 'name province tel'
+                select: 'name address telephone_number website description'
             });
         } else {
             query = Booking.find().populate({ 
                 path: 'company',   
-                select: 'name province tel'
+                select: '"name address telephone_number website description'
             });
         }
     }
@@ -37,38 +37,53 @@ exports.getBookings = async (req, res, next) => {
 //@desc Get single booking
 //@route GET /api/v1/bookings/:id
 //@access Public
+// @desc    Get single booking
+// @route   GET /api/v1/bookings/:id
+// @access  Private (เปลี่ยนจาก Public เป็น Private เพราะต้องเช็คสิทธิ์)
 exports.getBooking = async (req, res, next) => {
-  try {
-    const booking = await Booking.findById(req.params.id).populate({
-      path: "company",
-      select: "name province tel",
-    });
-    if (!booking) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: ` No booking with the id of ${req.params.id}`,
+    try {
+        const booking = await Booking.findById(req.params.id).populate({
+            path: "company",
+            select: "name address telephone_number website description",
         });
+
+        if (!booking) {
+            return res.status(404).json({ success: false, message: `No booking with the id of ${req.params.id}` });
+        }
+
+        // 🔒 เพิ่มลอจิกอุดช่องโหว่: ตรวจสอบความเป็นเจ้าของ (Ownership Check)
+        // ถ้าไม่ใช่คนจอง (เจ้าของ) และ ไม่ใช่ Admin ให้เตะออกทันที
+        if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
+            return res.status(401).json({ 
+                success: false, 
+                message: `User ${req.user.id} is not authorized to view this booking` 
+            });
+        }
+
+        res.status(200).json({ success: true, data: booking });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, message: "Cannot find Booking" });
     }
-    res.status(200).json({
-      success: true,
-      data: booking,
-    });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Cannot find Booking" });
-  }
 };
 // @desc    Add booking
-// @route   POST /api/v1/companies/:companyId/bookings
+// @route   POST /api/v1/companies/:id/bookings
 // @access  Private
 exports.addBooking = async (req, res, next) => {
   try {
     req.body.user = req.user.id;
-    req.body.company = req.params.companyId;
+    req.body.company = req.params.id;
+
+    // Validate and sanitize bookingDate
+    if (!req.body.bookingDate || isNaN(Date.parse(req.body.bookingDate))) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid booking date format. Please provide a valid ISO 8601 date string.',
+      });
+    }
+
+    // Ensure bookingDate is properly formatted
+    req.body.bookingDate = new Date(req.body.bookingDate).toISOString();
 
     const bookingDate = new Date(req.body.bookingDate);
     const minDate = new Date('2022-05-10T00:00:00Z');
@@ -87,14 +102,14 @@ exports.addBooking = async (req, res, next) => {
         message: `The user with ID ${req.user.id} has already made 3 bookings`,
       });
     }
-    req.body.company = req.params.companyId;
+    req.body.company = req.params.id;
 
-    const company = await Company.findById(req.params.companyId);
+    const company = await Company.findById(req.params.id);
 
     if (!company) {
       return res.status(404).json({
         success: false,
-        message: `No company with the id of ${req.params.companyId}`,
+        message: `No company with the id of ${req.params.id}`,
       });
     }
     const booking = await Booking.create(req.body);

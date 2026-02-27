@@ -105,16 +105,19 @@ exports.updateCompany = async (req, res, next) => {
 // @access Private
 exports.deleteCompany = async (req, res, next) => {
     try {
-        const company = await Company.findByIdAndDelete(req.params.id);
+        // 1. ค้นหาบริษัทก่อน เพื่อตรวจสอบว่ามีอยู่จริงหรือไม่
+        const company = await Company.findById(req.params.id);
 
         if (!company) {
-            return res.status(400).json({ success: false });
+            return res.status(400).json({ success: false, message: 'Company not found' });
         }
-        await Appointment.deleteMany({ company: req.params.id });
-        await company.deleteOne({_id: req.params.id});
+        await Booking.deleteMany({ company: req.params.id });
+
+        await company.deleteOne();
 
         res.status(200).json({ success: true, data: {} });
     } catch (err) {
-        res.status(400).json({ success: false });
+        console.log(err); 
+        res.status(400).json({ success: false, message: 'Delete failed due to server error' });
     }
 };
