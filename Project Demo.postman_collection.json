@@ -1027,5 +1027,12 @@
       },
       "response": []
     }
+  ],
+  "variable": [
+    {
+      "key": "URL",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
   ]
 }
