@@ -1,0 +1,1887 @@
+{
+  "info": {
+    "_postman_id": "f341c260-fc6c-443a-9ca0-8dd4d3af12b2",
+    "name": "Project Demo",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "25077041"
+  },
+  "item": [
+    {
+      "name": "Normal User Register",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 or 201 (Created)\", function () {\r",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);\r",
+              "});\r",
+              "pm.execution.setNextRequest(\"Normal User Login\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.environment.set(\"TEST_EMAIL\", pm.variables.replaceIn('{{$randomEmail}}'));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"telephone_number\": \"0812345678\",\r\n    \"email\": \"{{TEST_EMAIL}}\",\r\n    \"password\": \"password123\",\r\n    \"role\": \"user\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/register",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Normal User Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 (Login Success)\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "const response = pm.response.json();\r",
+              "pm.test(\"Token is generated\", function () {\r",
+              "    pm.expect(response).to.have.property('token');\r",
+              "});\r",
+              "// เก็บ Token และส่งไม้ต่อ\r",
+              "pm.environment.set(\"TOKEN\", response.token);\r",
+              "pm.execution.setNextRequest(\"View Companies\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"{{TEST_EMAIL}}\",\r\n    \"password\": \"password123\"\r\n}"
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/login",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View Companies",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "const response = pm.response.json();\r",
+              "pm.test(\"There are some companies available\", () => {\r",
+              "    pm.expect(response.count).to.be.above(0);\r",
+              "});\r",
+              "// ดึง ID บริษัทแรกมาเก็บไว้จองคิว\r",
+              "pm.environment.set(\"COMPANY_ID\", response.data[0]._id);\r",
+              "pm.execution.setNextRequest(\"Create 1st Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/companies",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies"
+          ]
+        },
+        "description": "fetch all hospitals from database"
+      },
+      "response": []
+    },
+    {
+      "name": "Create 1st Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Booking 1 Created Successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.environment.set(\"USER_BOOKING_ID\", response.data._id);",
+              "// เก็บ booking นี้ไว้ให้ admin ใช้ด้วย (จะไม่ถูกลบโดย user)",
+              "pm.environment.set(\"ADMIN_TARGET_BOOKING_ID\", response.data._id);",
+              "pm.execution.setNextRequest(\"Create 2nd Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-12\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create 2nd Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Booking 2 Created Successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "pm.execution.setNextRequest(\"Create date out of range Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-13\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create date out of range Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should block invalid date (Expect 400)\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.execution.setNextRequest(\"Create Booking Before Min Date (Boundary)\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2023-05-12\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Booking Before Min Date (Boundary)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should block date before May 10 (Expect 400)\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.execution.setNextRequest(\"Create Booking After Max Date (Boundary)\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-09\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Booking After Max Date (Boundary)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should block date after May 13 (Expect 400)\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.execution.setNextRequest(\"Create 3rd Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-14\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create 3rd Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Booking 3 Created Successfully\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "const response = pm.response.json();",
+              "// เก็บ booking ที่ 3 ไว้ให้ user update และ delete",
+              "pm.environment.set(\"USER_BOOKING_ID\", response.data._id);",
+              "pm.execution.setNextRequest(\"Create 4th Booking (Over limit)\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-13\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create 4th Booking (Over limit)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should block over limit (Expect 400)\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});\r",
+              "const response = pm.response.json();\r",
+              "pm.test(\"Error message matches quota limit\", function () {\r",
+              "    pm.expect(response.message).to.include(\"already made 3 bookings\");\r",
+              "});\r",
+              "pm.execution.setNextRequest(\"View Own Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-13\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:companyId/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":companyId",
+            "bookings",
+            ""
+          ],
+          "variable": [
+            {
+              "key": "companyId",
+              "value": "{{COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View Own Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test(\"Count should be exactly 3\", function () {\r",
+              "    pm.expect(pm.response.json().count).to.eql(3);\r",
+              "});\r",
+              "pm.execution.setNextRequest(\"Update Own Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ""
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Own Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Update Successful (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.test(\"Booking date was actually updated\", function () {",
+              "    pm.expect(response.data.bookingDate).to.include(\"2022-05-12\");",
+              "});",
+              "pm.execution.setNextRequest(\"Delete Own Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\":\"2022-05-12\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:USER_BOOKING_ID",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":USER_BOOKING_ID"
+          ],
+          "variable": [
+            {
+              "key": "USER_BOOKING_ID",
+              "value": "{{USER_BOOKING_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Own Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete Successful (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.execution.setNextRequest(\"Login with Wrong Password\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:USER_BOOKING_ID",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":USER_BOOKING_ID"
+          ],
+          "variable": [
+            {
+              "key": "USER_BOOKING_ID",
+              "value": "{{USER_BOOKING_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login with Wrong Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should reject wrong password (Expect 400/401)\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+              "});",
+              "pm.execution.setNextRequest(\"Login with Non-Existent Email\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"{{TEST_EMAIL}}\",\r\n    \"password\": \"wrongpassword\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/login",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login with Non-Existent Email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should reject non-existent email (Expect 400/401)\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+              "});",
+              "pm.execution.setNextRequest(\"Register Duplicate Email\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"notexist@nowhere.com\",\r\n    \"password\": \"password123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/login",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Register Duplicate Email",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should reject duplicate email (Expect 400)\", function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "pm.execution.setNextRequest(\"Get Me (Auth Check)\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Duplicate User\",\r\n    \"telephone_number\": \"0800000001\",\r\n    \"email\": \"{{TEST_EMAIL}}\",\r\n    \"password\": \"password123\",\r\n    \"role\": \"user\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/register",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "register"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Me (Auth Check)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Get current user info (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.test(\"Response contains user data\", function () {",
+              "    pm.expect(response.data).to.have.property(\"email\");",
+              "    pm.expect(response.data).to.have.property(\"name\");",
+              "});",
+              "pm.test(\"Password field is hidden\", function () {",
+              "    pm.expect(response.data).to.not.have.property(\"password\");",
+              "});",
+              "pm.execution.setNextRequest(\"Access Protected Route Without Token\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/me",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Access Protected Route Without Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Should reject request without token (Expect 401)\", function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "pm.execution.setNextRequest(\"User Access Other User Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User Access Other User Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// ทดสอบด้วย booking ID ที่ไม่มีอยู่จริง → ควรได้ 404",
+              "pm.test(\"Cannot access non-existent booking (Expect 404)\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.execution.setNextRequest(\"User Cannot Update Other User Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:id",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "000000000000000000000000"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User Cannot Update Other User Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// ทดสอบด้วย booking ID ที่ไม่มีอยู่จริง → ควรได้ 404",
+              "pm.test(\"Cannot update non-existent booking (Expect 404)\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.execution.setNextRequest(\"User Cannot Delete Other User Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\": \"2022-05-11\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:id",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "000000000000000000000000"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User Cannot Delete Other User Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// ทดสอบด้วย booking ID ที่ไม่มีอยู่จริง → ควรได้ 404",
+              "pm.test(\"Cannot delete non-existent booking (Expect 404)\", function () {",
+              "    pm.response.to.have.status(404);",
+              "});",
+              "pm.execution.setNextRequest(\"User Cannot Create Company\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:id",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "000000000000000000000000"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "User Cannot Create Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Regular user should not create company (Expect 403)\", function () {",
+              "    pm.response.to.have.status(403);",
+              "});",
+              "pm.execution.setNextRequest(\"Normal User Log Out\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Unauthorized Company\",\r\n    \"address\": \"99 Test St\",\r\n    \"website\": \"https://test.com\",\r\n    \"description\": \"Should not be created\",\r\n    \"telephone_number\": \"0200000000\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Normal User Log Out",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Logout Successful (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.environment.unset(\"TOKEN\"); // แก้จาก USER_TOKEN -> TOKEN ให้ตรงกับที่ set ไว้",
+              "pm.execution.setNextRequest(\"Admin Login\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": ""
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/logout",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin Login Successful\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.environment.set(\"ADMIN_TOKEN\", response.token);",
+              "pm.environment.set(\"TOKEN\", response.token); // set TOKEN ด้วยเพื่อให้ Admin requests ใช้ Bearer ได้",
+              "pm.execution.setNextRequest(\"View All Bookings\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\":\"admin@gmail.com\",\r\n    \"password\":\"12345678\"\r\n}"
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/login",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View All Bookings",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can view bookings (200)\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.execution.setNextRequest(\"View any Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "View any Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can view specific user booking (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.execution.setNextRequest(\"Update any Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:ADMIN_BOOKING_ID",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":ADMIN_BOOKING_ID"
+          ],
+          "variable": [
+            {
+              "key": "ADMIN_BOOKING_ID",
+              "value": "{{ADMIN_TARGET_BOOKING_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update any Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can update user booking (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.test(\"Booking date was actually updated by admin\", function () {",
+              "    pm.expect(response.data.bookingDate).to.include(\"2022-05-12\");",
+              "});",
+              "pm.execution.setNextRequest(\"Delete any Booking\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "description": "JSON Type",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"bookingDate\":\"2022-05-12\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:ADMIN_BOOKING_ID",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":ADMIN_BOOKING_ID"
+          ],
+          "variable": [
+            {
+              "key": "ADMIN_BOOKING_ID",
+              "value": "{{ADMIN_TARGET_BOOKING_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete any Booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can delete user booking (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.execution.setNextRequest(\"Admin Create Company\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/bookings/:ADMIN_BOOKING_ID",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "bookings",
+            ":ADMIN_BOOKING_ID"
+          ],
+          "variable": [
+            {
+              "key": "ADMIN_BOOKING_ID",
+              "value": "{{ADMIN_TARGET_BOOKING_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Create Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can create company (201)\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.test(\"Response contains company data\", function () {",
+              "    pm.expect(response.data).to.have.property(\"_id\");",
+              "    pm.expect(response.data.name).to.eql(\"Test New Company\");",
+              "});",
+              "pm.environment.set(\"NEW_COMPANY_ID\", response.data._id);",
+              "pm.execution.setNextRequest(\"Admin Update Company\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Test New Company\",\r\n    \"address\": \"99 Admin St, Bangkok\",\r\n    \"website\": \"https://testnew.com\",\r\n    \"description\": \"Created by admin for testing\",\r\n    \"telephone_number\": \"0200000099\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Update Company",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can update company (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.test(\"Company name was updated\", function () {",
+              "    pm.expect(response.data.name).to.eql(\"Test New Company Updated\");",
+              "});",
+              "pm.execution.setNextRequest(\"Admin Delete Company (Cascade)\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Test New Company Updated\",\r\n    \"address\": \"100 Admin St, Bangkok\",\r\n    \"website\": \"https://testnew-updated.com\",\r\n    \"description\": \"Updated by admin\",\r\n    \"telephone_number\": \"0200000098\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:id",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{NEW_COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Delete Company (Cascade)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can delete company (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.execution.setNextRequest(\"Admin Get Me\");"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/companies/:id",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "companies",
+            ":id"
+          ],
+          "variable": [
+            {
+              "key": "id",
+              "value": "{{NEW_COMPANY_ID}}"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Admin Get Me",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Admin can get own info (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.test(\"Role is admin\", function () {",
+              "    pm.expect(response.data.role).to.eql(\"admin\");",
+              "});",
+              "pm.execution.setNextRequest(null); // จบ Runner"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{ADMIN_TOKEN}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{URL}}/api/v1/auth/me",
+          "host": [
+            "{{URL}}"
+          ],
+          "path": [
+            "api",
+            "v1",
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "URL",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ]
+}

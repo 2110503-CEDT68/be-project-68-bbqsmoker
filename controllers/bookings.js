@@ -20,7 +20,7 @@ exports.getBookings = async (req, res, next) => {
         } else {
             query = Booking.find().populate({ 
                 path: 'company',   
-                select: '"name address telephone_number website description'
+                select: 'name address telephone_number website description'
             });
         }
     }

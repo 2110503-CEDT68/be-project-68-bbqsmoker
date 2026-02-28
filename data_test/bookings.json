@@ -1,0 +1,302 @@
+[
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 3,
+    "companyIndex": 0
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 3,
+    "companyIndex": 1
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 3,
+    "companyIndex": 2
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 4,
+    "companyIndex": 3
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 4,
+    "companyIndex": 4
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 4,
+    "companyIndex": 5
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 5,
+    "companyIndex": 6
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 5,
+    "companyIndex": 7
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 5,
+    "companyIndex": 8
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 6,
+    "companyIndex": 9
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 6,
+    "companyIndex": 10
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 6,
+    "companyIndex": 11
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 7,
+    "companyIndex": 12
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 7,
+    "companyIndex": 13
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 7,
+    "companyIndex": 14
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 8,
+    "companyIndex": 15
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 8,
+    "companyIndex": 16
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 8,
+    "companyIndex": 17
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 9,
+    "companyIndex": 18
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 9,
+    "companyIndex": 19
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 9,
+    "companyIndex": 20
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 10,
+    "companyIndex": 21
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 10,
+    "companyIndex": 22
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 10,
+    "companyIndex": 23
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 11,
+    "companyIndex": 24
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 11,
+    "companyIndex": 25
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 11,
+    "companyIndex": 26
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 12,
+    "companyIndex": 27
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 12,
+    "companyIndex": 28
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 12,
+    "companyIndex": 29
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 13,
+    "companyIndex": 30
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 13,
+    "companyIndex": 31
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 13,
+    "companyIndex": 32
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 14,
+    "companyIndex": 33
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 14,
+    "companyIndex": 34
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 14,
+    "companyIndex": 35
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 15,
+    "companyIndex": 36
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 15,
+    "companyIndex": 37
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 15,
+    "companyIndex": 38
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 16,
+    "companyIndex": 39
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 16,
+    "companyIndex": 40
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 16,
+    "companyIndex": 41
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 17,
+    "companyIndex": 42
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 17,
+    "companyIndex": 43
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 17,
+    "companyIndex": 44
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 18,
+    "companyIndex": 45
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 18,
+    "companyIndex": 46
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 18,
+    "companyIndex": 47
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 19,
+    "companyIndex": 48
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 19,
+    "companyIndex": 49
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 19,
+    "companyIndex": 50
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 20,
+    "companyIndex": 51
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 20,
+    "companyIndex": 52
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 20,
+    "companyIndex": 53
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 21,
+    "companyIndex": 54
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 21,
+    "companyIndex": 0
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 21,
+    "companyIndex": 1
+  },
+  {
+    "bookingDate": "2022-05-10T10:00:00.000Z",
+    "userIndex": 22,
+    "companyIndex": 2
+  },
+  {
+    "bookingDate": "2022-05-11T10:00:00.000Z",
+    "userIndex": 22,
+    "companyIndex": 3
+  },
+  {
+    "bookingDate": "2022-05-12T10:00:00.000Z",
+    "userIndex": 22,
+    "companyIndex": 4
+  }
+]
