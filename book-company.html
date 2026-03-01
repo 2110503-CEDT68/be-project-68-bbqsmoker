@@ -5,156 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Book a Company — Online Jobfair</title>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #F5F2ED; --surface: #fff; --text: #1A1714; --muted: #7C7570;
-      --accent: #C8502A; --accent-light: #F9EDE8; --border: #E0DAD4; --radius: 12px;
-    }
-    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* NAV */
-    nav { position: sticky; top: 0; z-index: 100; height: 64px;
-      background: rgba(245,242,237,.92); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; padding: 0 40px; }
-    .nav-brand { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-    .brand-dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
-    .brand-name { font-weight: 600; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; color: var(--text); }
-    .nav-right { display: flex; align-items: center; gap: 12px; }
-    .btn-nav { font-size: .82rem; font-weight: 500; background: none;
-      border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; cursor: pointer;
-      color: var(--muted); transition: all .2s; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
-    .btn-nav:hover { border-color: var(--text); color: var(--text); }
-    .nav-user { font-size: .85rem; color: var(--muted); }
-    .nav-user strong { color: var(--text); }
-
-    /* LAYOUT */
-    .container { max-width: 1060px; margin: 0 auto; padding: 40px 24px; }
-    .page-header { margin-bottom: 28px; }
-    .page-header h1 { font-family: 'DM Serif Display', serif; font-size: 2rem; margin-bottom: 6px; }
-    .page-header p { font-size: .9rem; color: var(--muted); }
-
-    /* INFO BANNER */
-    .info-banner { background: #FFF8F0; border: 1px solid #F0D8C0; border-radius: 10px;
-      padding: 12px 16px; font-size: .83rem; color: #7A4010; margin-bottom: 24px;
-      display: flex; align-items: center; gap: 10px; }
-
-    /* SEARCH */
-    .search-bar { display: flex; gap: 12px; margin-bottom: 24px; }
-    .search-wrap { position: relative; flex: 1; }
-    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
-    #searchInput { font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text);
-      background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
-      padding: 11px 14px 11px 40px; width: 100%; outline: none;
-      transition: border-color .2s, box-shadow .2s; }
-    #searchInput:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(200,80,42,.1); }
-    #searchInput::placeholder { color: #B0AAA4; }
-
-    /* GRID */
-    .companies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
-
-    /* COMPANY CARD */
-    .company-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius);
-      padding: 22px; display: flex; flex-direction: column; gap: 12px;
-      animation: fadeUp .4s ease both; transition: box-shadow .2s, border-color .2s; }
-    .company-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,.08); border-color: #C8BAB2; }
-    .company-card.is-booked { border-color: #5a9e6f; background: #F4FBF6; }
-    .company-top { display: flex; align-items: flex-start; gap: 12px; }
-    .company-logo { width: 42px; height: 42px; border-radius: 10px; background: var(--accent-light);
-      display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-    .company-name { font-weight: 600; font-size: .95rem; margin-bottom: 2px; }
-    .company-sub { font-size: .78rem; color: var(--muted); }
-    .company-desc { font-size: .83rem; color: var(--muted); line-height: 1.55; }
-    .company-contacts { display: flex; flex-direction: column; gap: 5px; }
-    .c-contact { font-size: .78rem; color: var(--muted); display: flex; align-items: center; gap: 6px; }
-    .c-contact a { color: var(--accent); text-decoration: none; }
-    .company-footer { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: auto; padding-top: 4px; border-top: 1px solid var(--border); }
-    .btn-book { font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 600;
-      color: #fff; background: var(--text); border: none; border-radius: 9px;
-      padding: 9px 20px; cursor: pointer; transition: background .2s, transform .15s, box-shadow .2s; }
-    .btn-book:hover { background: var(--accent); box-shadow: 0 4px 14px rgba(200,80,42,.25); transform: translateY(-1px); }
-    .btn-book:disabled { opacity: .5; pointer-events: none; }
-    .btn-booked { font-size: .82rem; font-weight: 600; color: #2D7A47;
-      background: #E8F5EC; border: none; border-radius: 9px; padding: 9px 18px; cursor: default; }
-
-    /* SKELETON */
-    .skeleton { background: linear-gradient(90deg, #ede8e2 25%, #f5f2ed 50%, #ede8e2 75%);
-      background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius); }
-    .sk-company { height: 210px; }
-    @keyframes shimmer { to { background-position: -200% 0; } }
-
-    /* MODAL */
-    .modal-overlay { position: fixed; inset: 0; background: rgba(26,23,20,.52);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 200; opacity: 0; pointer-events: none; transition: opacity .22s; }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal { background: var(--surface); border-radius: 16px; padding: 32px; width: 90%; max-width: 440px;
-      transform: translateY(22px); transition: transform .22s; box-shadow: 0 20px 60px rgba(0,0,0,.15); }
-    .modal-overlay.open .modal { transform: translateY(0); }
-    .modal h3 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 6px; }
-    .modal-sub { font-size: .86rem; color: var(--muted); margin-bottom: 22px; }
-    .modal-detail { background: var(--bg); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; }
-    .detail-row { display: flex; justify-content: space-between; align-items: flex-start;
-      font-size: .84rem; padding: 5px 0; border-bottom: 1px solid var(--border); gap: 12px; }
-    .detail-row:last-child { border: none; padding-bottom: 0; }
-    .detail-row .key { color: var(--muted); flex-shrink: 0; }
-    .detail-row .val { font-weight: 500; text-align: right; }
-
-    /* date picker in modal */
-    .modal-date-field { margin-bottom: 20px; }
-    .modal-date-field label { font-size: .8rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 6px; }
-    .modal-date-field input[type="date"] {
-      font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text);
-      background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius);
-      padding: 10px 14px; width: 100%; outline: none;
-      transition: border-color .2s, box-shadow .2s; }
-    .modal-date-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(200,80,42,.1); }
-    .date-hint { font-size: .75rem; color: var(--muted); margin-top: 5px; }
-
-    .modal-actions { display: flex; gap: 10px; }
-    .btn-modal-cancel { flex: 1; padding: 11px; font-family: 'DM Sans', sans-serif; font-size: .88rem;
-      font-weight: 500; background: none; border: 1.5px solid var(--border); border-radius: 10px;
-      cursor: pointer; color: var(--muted); transition: all .2s; }
-    .btn-modal-cancel:hover { border-color: var(--text); color: var(--text); }
-    .btn-modal-confirm { flex: 2; padding: 11px; font-family: 'DM Sans', sans-serif; font-size: .88rem;
-      font-weight: 600; background: var(--text); color: #fff; border: none; border-radius: 10px;
-      cursor: pointer; transition: background .2s, box-shadow .2s; }
-    .btn-modal-confirm:hover { background: var(--accent); box-shadow: 0 4px 16px rgba(200,80,42,.25); }
-    .btn-modal-confirm:disabled { opacity: .55; pointer-events: none; }
-
-    /* TOAST */
-    .toast { position: fixed; bottom: 28px; right: 28px; background: var(--text); color: #fff;
-      font-size: .84rem; padding: 12px 20px; border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,.2); transform: translateY(80px); opacity: 0;
-      transition: all .3s; z-index: 999; max-width: 320px; }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { background: #2D7A47; }
-    .toast.error { background: #A02020; }
-
-    .empty-state { text-align: center; padding: 56px; grid-column: 1/-1; }
-    .empty-state .icon { font-size: 2.2rem; margin-bottom: 14px; }
-    .empty-state h3 { font-family: 'DM Serif Display', serif; font-size: 1.3rem; margin-bottom: 8px; }
-    .empty-state p { font-size: .87rem; color: var(--muted); }
-
-    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-    @media (max-width: 640px) {
-      nav { padding: 0 16px; }
-      .container { padding: 24px 16px; }
-      .search-bar { flex-direction: column; }
-      .companies-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="book-company.css" />
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
   <a class="nav-brand" href="dashboard.html">
     <div class="brand-dot"></div>
     <span class="brand-name">Online Jobfair</span>
   </a>
   <div class="nav-right">
-    <span class="nav-user">Hi, <strong id="userName">—</strong></span>
+    <span class="nav-user">Hi, <strong id="userName">--</strong></span>
     <a href="dashboard.html" class="btn-nav">
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path d="M19 12H5M12 5l-7 7 7 7"/>
@@ -165,22 +28,24 @@
   </div>
 </nav>
 
+<!-- MAIN -->
 <div class="container">
   <div class="page-header">
     <h1>Book a Company</h1>
-    <p id="subtext">Loading companies…</p>
+    <p id="subtext">Loading companies...</p>
   </div>
 
   <div class="info-banner">
-    ⚠️ Booking dates must be between <strong>May 10–13, 2022</strong>. Each user may book up to <strong>3 companies</strong>.
+    Booking dates must be between <strong>May 10-13, 2022</strong>. Each user may book up to <strong>3 companies</strong>.
   </div>
 
   <div class="search-bar">
     <div class="search-wrap">
       <svg class="search-icon" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
       </svg>
-      <input type="text" id="searchInput" placeholder="Search company name or description…" oninput="filterCompanies()" />
+      <input type="text" id="searchInput" placeholder="Search company name or description..." oninput="filterCompanies()" />
     </div>
   </div>
 
@@ -201,17 +66,15 @@
     <p class="modal-sub">Choose your interview date below.</p>
 
     <div class="modal-detail">
-      <div class="detail-row"><span class="key">Company</span><span class="val" id="mCompany">—</span></div>
-      <div class="detail-row"><span class="key">Address</span><span class="val" id="mAddress">—</span></div>
-      <div class="detail-row"><span class="key">Website</span><span class="val" id="mWebsite">—</span></div>
-      <div class="detail-row"><span class="key">Tel.</span><span class="val" id="mTel">—</span></div>
+      <div class="detail-row"><span class="key">Company</span><span class="val" id="mCompany">--</span></div>
+      <div class="detail-row"><span class="key">Address</span><span class="val" id="mAddress">--</span></div>
+      <div class="detail-row"><span class="key">Website</span><span class="val" id="mWebsite">--</span></div>
+      <div class="detail-row"><span class="key">Tel.</span><span class="val" id="mTel">--</span></div>
     </div>
 
-    <!-- bookingDate picker (May 10–13, 2022) -->
     <div class="modal-date-field">
       <label for="bookingDateInput">Interview Date <span style="color:var(--accent)">*</span></label>
-      <input type="date" id="bookingDateInput"
-        min="2022-05-10" max="2022-05-13" value="2022-05-10" />
+      <input type="date" id="bookingDateInput" min="2022-05-10" max="2022-05-13" value="2022-05-10" />
       <div class="date-hint">Must be between May 10 and May 13, 2022</div>
     </div>
 
@@ -222,213 +85,10 @@
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<script>
-  const API_BASE = 'http://localhost:5000/api/v1';
-
-  const token = localStorage.getItem('jf_token');
-  if (!token) window.location.href = 'login.html';
-
-  const user = (() => { try { return JSON.parse(localStorage.getItem('jf_user')); } catch { return null; } })();
-  if (user) document.getElementById('userName').textContent = user.name || user.email || 'User';
-
-  function logout() {
-    localStorage.removeItem('jf_token');
-    localStorage.removeItem('jf_user');
-    window.location.href = 'login.html';
-  }
-
-  async function apiFetch(method, path, body = null) {
-    const res = await fetch(API_BASE + path, {
-      method,
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-      body: body ? JSON.stringify(body) : null,
-    });
-    if (res.status === 401) { logout(); return; }
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || data.msg || 'Request failed');
-    return data;
-  }
-
-  function showToast(msg, type = '') {
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.className = 'toast show ' + type;
-    setTimeout(() => t.className = 'toast', 3500);
-  }
-
-  const LOGOS = ['🏢','💼','🚀','⚡','🌐','🏦','🔬','🎯','🛠','📦','🖥','🎨'];
-  let allCompanies = [];
-  let bookedCompanyIds = new Set(); // track which company IDs user already booked
-  let pendingCompany = null;
-
-  async function loadData() {
-    try {
-      const [companiesRes, bookingsRes] = await Promise.allSettled([
-        // GET /api/v1/companies → { success, count, data: [...] }
-        apiFetch('GET', '/companies'),
-        // GET /api/v1/bookings → user's bookings with company populated
-        apiFetch('GET', '/bookings'),
-      ]);
-
-      if (companiesRes.status === 'fulfilled') {
-        allCompanies = companiesRes.value?.data || [];
-      }
-
-      if (bookingsRes.status === 'fulfilled') {
-        const bookings = bookingsRes.value?.data || [];
-        bookings.forEach(b => {
-          const cid = b.company?._id || b.company?.id;
-          if (cid) bookedCompanyIds.add(String(cid));
-        });
-      }
-
-      document.getElementById('subtext').textContent =
-        `${allCompanies.length} companies participating in this Jobfair.`;
-
-      renderCompanies(allCompanies);
-    } catch (err) {
-      document.getElementById('companiesGrid').innerHTML = `
-        <div class="empty-state">
-          <div class="icon">⚠️</div>
-          <h3>Could not load companies</h3>
-          <p>${err.message}</p>
-        </div>`;
-    }
-  }
-
-  function renderCompanies(list) {
-    if (!list.length) {
-      document.getElementById('companiesGrid').innerHTML = `
-        <div class="empty-state">
-          <div class="icon">🔍</div>
-          <h3>No companies found</h3>
-          <p>Try a different search term.</p>
-        </div>`;
-      return;
-    }
-
-    // Company fields: _id, name, address, website, description, telephone_number
-    document.getElementById('companiesGrid').innerHTML = list.map((c, i) => {
-      const id = c._id || c.id;
-      const isBooked = bookedCompanyIds.has(String(id));
-      return `
-        <div class="company-card ${isBooked ? 'is-booked' : ''}" style="animation-delay:${i * .04}s">
-          <div class="company-top">
-            <div class="company-logo">${LOGOS[i % LOGOS.length]}</div>
-            <div>
-              <div class="company-name">${c.name}</div>
-              <div class="company-sub">${c.address || ''}</div>
-            </div>
-          </div>
-          ${c.description ? `<p class="company-desc">${c.description.length > 110 ? c.description.slice(0, 110) + '…' : c.description}</p>` : ''}
-          <div class="company-contacts">
-            ${c.telephone_number ? `<div class="c-contact">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.88 12 19.79 19.79 0 0 1 1.79 3.38 2 2 0 0 1 3.78 1.21h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              ${c.telephone_number}
-            </div>` : ''}
-            ${c.website ? `<div class="c-contact">
-              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-              <a href="${c.website.startsWith('http') ? c.website : 'https://' + c.website}" target="_blank">${c.website}</a>
-            </div>` : ''}
-          </div>
-          <div class="company-footer">
-            ${isBooked
-              ? `<span class="btn-booked">✓ Already Booked</span>`
-              : `<button class="btn-book" onclick="openModal('${id}')">Book Now</button>`
-            }
-          </div>
-        </div>`;
-    }).join('');
-  }
-
-  function filterCompanies() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
-    const filtered = !q ? allCompanies : allCompanies.filter(c =>
-      (c.name || '').toLowerCase().includes(q) ||
-      (c.description || '').toLowerCase().includes(q) ||
-      (c.address || '').toLowerCase().includes(q)
-    );
-    renderCompanies(filtered);
-  }
-
-  // ── MODAL
-  function openModal(companyId) {
-    const c = allCompanies.find(x => String(x._id || x.id) === String(companyId));
-    if (!c) return;
-    pendingCompany = c;
-    document.getElementById('mCompany').textContent = c.name || '—';
-    document.getElementById('mAddress').textContent = c.address || '—';
-    document.getElementById('mWebsite').textContent = c.website || '—';
-    document.getElementById('mTel').textContent = c.telephone_number || '—';
-    document.getElementById('bookingDateInput').value = '2022-05-10';
-    document.getElementById('modalOverlay').classList.add('open');
-  }
-
-  function closeModal() {
-    document.getElementById('modalOverlay').classList.remove('open');
-    pendingCompany = null;
-  }
-
-  document.getElementById('modalOverlay').addEventListener('click', (e) => {
-    if (e.target === document.getElementById('modalOverlay')) closeModal();
-  });
-
-  async function confirmBooking() {
-    if (!pendingCompany) return;
-
-    const bookingDate = document.getElementById('bookingDateInput').value;
-    if (!bookingDate) { showToast('Please select a booking date.', 'error'); return; }
-
-    // ── ส่ง plain date "YYYY-MM-DD" ตรงๆ เหมือน Postman
-    // backend ใช้ Date.parse() ซึ่งรับ "2022-05-12" ได้ปกติ
-    // ไม่แปลงเป็น ISO full string เพราะ helmet/xss อาจ sanitize ค่า
-    const [y, m, d] = bookingDate.split('-').map(Number);
-    const dateObj = new Date(y, m - 1, d);
-    const minD = new Date(2022, 4, 10);
-    const maxD = new Date(2022, 4, 13);
-    if (dateObj < minD || dateObj > maxD) {
-      showToast('Date must be between May 10–13, 2022.', 'error'); return;
-    }
-
-    const btn = document.getElementById('confirmBtn');
-    btn.disabled = true; btn.textContent = 'Booking…';
-
-    try {
-      const companyId = pendingCompany._id || pendingCompany.id;
-
-      // POST /api/v1/companies/:companyId/bookings
-      await apiFetch('POST', `/companies/${companyId}/bookings`, {
-        bookingDate: bookingDate,  // plain 'YYYY-MM-DD' — ตรงกับที่ Postman ใช้
-      });
-
-      bookedCompanyIds.add(String(companyId));
-      // ── แสดง toast สำเร็จ
-      showToast(`✅ Booked ${pendingCompany.name} on ${bookingDate} successfully!`, 'success');
-      closeModal();
-      renderCompanies(allCompanies);
-
-    } catch (err) {
-      const msg = err.message || '';
-      // ── ตรวจว่าเคยจองแล้ว หรือเกิน 3 bookings
-      if (
-        msg.includes('already made 3') ||
-        msg.toLowerCase().includes('already') ||
-        msg.includes('3 bookings')
-      ) {
-        showToast('⚠️ You have already booked this company or reached the 3-booking limit.', 'error');
-        bookedCompanyIds.add(String(pendingCompany._id || pendingCompany.id));
-        closeModal();
-        renderCompanies(allCompanies);
-      } else {
-        showToast(`❌ ${msg}`, 'error');
-      }
-    } finally {
-      btn.disabled = false; btn.textContent = 'Confirm Booking';
-    }
-  }
-
-  loadData();
-</script>
+<!-- SCRIPTS -->
+<script src="book-company.js"></script>
 </body>
 </html>
