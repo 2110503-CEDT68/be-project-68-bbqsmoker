@@ -707,7 +707,7 @@
             }
           ]
         },
-        "method": "GET",
+        "method": "POST",
         "header": [
           {
             "key": "Content-Type",
@@ -804,9 +804,11 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Admin can view bookings (200)\", function () {\r",
-              "    pm.response.to.have.status(200);\r",
-              "});\r",
+              "pm.test(\"Admin can view bookings (200)\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "const response = pm.response.json();",
+              "pm.environment.set(\"ADMIN_BOOKING_ID\", response.data[0]._id);",
               "pm.execution.setNextRequest(\"View any Booking\");"
             ],
             "type": "text/javascript",
