@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Online Jobfair</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F5F2ED; --surface: #fff; --text: #1A1714; --muted: #7C7570;
+      --accent: #C8502A; --border: #E0DAD4; --radius: 12px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr; }
+
+    .panel-left { position: relative; background: var(--text); display: flex;
+      flex-direction: column; justify-content: space-between; padding: 52px 56px; overflow: hidden; }
+    .panel-left::before { content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 20% 80%, rgba(200,80,42,.35) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 10%, rgba(200,80,42,.15) 0%, transparent 65%); }
+    .brand { position: relative; z-index: 1; }
+    .brand-dot { width: 10px; height: 10px; background: var(--accent); border-radius: 50%;
+      display: inline-block; margin-right: 6px; vertical-align: middle; }
+    .brand-name { font-weight: 600; font-size: .85rem; color: rgba(255,255,255,.55); letter-spacing: .12em; text-transform: uppercase; }
+    .left-content { position: relative; z-index: 1; }
+    .event-label { font-size: .78rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    .event-label::before { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); }
+    .left-title { font-family: 'DM Serif Display', serif; font-size: clamp(2.4rem, 3.5vw, 3.2rem);
+      line-height: 1.1; color: #fff; margin-bottom: 28px; }
+    .left-title em { font-style: italic; color: #C8C0B8; }
+    .info-item { display: flex; align-items: flex-start; gap: 14px; color: rgba(255,255,255,.6);
+      font-size: .9rem; font-weight: 300; margin-bottom: 14px; }
+    .info-icon { width: 36px; height: 36px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .info-text strong { display: block; font-weight: 500; color: rgba(255,255,255,.9); margin-bottom: 2px; }
+    .deco { position: absolute; bottom: -40px; right: -40px; width: 220px; height: 220px; opacity: .06;
+      background-image: linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px); background-size: 22px 22px; }
+
+    .panel-right { display: flex; align-items: center; justify-content: center; padding: 48px 56px; overflow-y: auto; }
+    .form-card { width: 100%; max-width: 400px; animation: fadeUp .5s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    .form-header { margin-bottom: 32px; }
+    .form-header h2 { font-family: 'DM Serif Display', serif; font-size: 2rem; color: var(--text); margin-bottom: 8px; }
+    .form-header p { font-size: .88rem; color: var(--muted); }
+    .form-header p a { color: var(--accent); text-decoration: none; font-weight: 500; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    label { font-size: .8rem; font-weight: 500; color: var(--text); letter-spacing: .03em; }
+    .req { color: var(--accent); }
+    input[type="email"], input[type="password"] {
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; color: var(--text);
+      background: #FAFAF8; border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: 11px 14px; outline: none; width: 100%;
+      transition: border-color .2s, box-shadow .2s, background .2s; }
+    input::placeholder { color: #B0AAA4; }
+    input:focus { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 3px rgba(200,80,42,.1); }
+    .input-wrap { position: relative; }
+    .input-wrap input { padding-right: 42px; }
+    .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: var(--muted); display: flex; align-items: center; transition: color .2s; }
+    .toggle-pw:hover { color: var(--accent); }
+
+    .forgot { text-align: right; margin-top: -8px; margin-bottom: 20px; }
+    .forgot a { font-size: .8rem; color: var(--muted); text-decoration: none; }
+
+    .error-box { background: #FFF0EC; border: 1px solid #F5C5B5; border-radius: 8px;
+      padding: 10px 14px; font-size: .83rem; color: #8B2D12; margin-bottom: 16px; display: none; }
+
+    .btn { width: 100%; padding: 13px; background: var(--text); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; font-weight: 600; letter-spacing: .04em;
+      border: none; border-radius: var(--radius); cursor: pointer;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn:hover { background: var(--accent); box-shadow: 0 6px 20px rgba(200,80,42,.3); transform: translateY(-1px); }
+    .btn:disabled { opacity: .6; pointer-events: none; }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .divider span { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+    .register-link { text-align: center; font-size: .82rem; color: var(--muted); }
+    .register-link a { color: var(--accent); text-decoration: none; font-weight: 500; }
+
+    @media (max-width: 860px) {
+      body { grid-template-columns: 1fr; }
+      .panel-left { min-height: 260px; padding: 32px 28px; }
+      .panel-right { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="panel-left">
+  <div class="brand"><span class="brand-dot"></span><span class="brand-name">Online Jobfair</span></div>
+  <div class="left-content">
+    <div class="event-label">Sign In to Continue</div>
+    <h1 class="left-title">Welcome<br /><em>back.</em></h1>
+    <div class="info-item">
+      <div class="info-icon">📅</div>
+      <div class="info-text"><strong>Date</strong>DD Month YYYY</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">🕐</div>
+      <div class="info-text"><strong>Time</strong>HH:MM — HH:MM</div>
+    </div>
+    <div class="info-item">
+      <div class="info-icon">🌐</div>
+      <div class="info-text"><strong>Format</strong>Online — Zoom / Live Stream</div>
+    </div>
+  </div>
+  <div class="deco"></div>
+</div>
+
+<div class="panel-right">
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Sign in</h2>
+      <p>Access your Jobfair dashboard</p>
+    </div>
+    <div class="error-box" id="errorBox"></div>
+    <form id="loginForm" novalidate>
+      <div class="field">
+        <label for="email">Email Address <span class="req">*</span></label>
+        <input type="email" id="email" placeholder="you@example.com" autocomplete="email" />
+      </div>
+      <div class="field">
+        <label for="password">Password <span class="req">*</span></label>
+        <div class="input-wrap">
+          <input type="password" id="password" placeholder="Your password" autocomplete="current-password" />
+          <button type="button" class="toggle-pw" onclick="togglePw()">
+            <svg id="eyeIcon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="forgot"><a href="#">Forgot password?</a></div>
+      <button type="submit" class="btn" id="loginBtn">
+        Sign In
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+    </form>
+    <div class="divider"><span>or</span></div>
+    <div class="register-link">Don't have an account? <a href="register.html">Register here</a></div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:5000/api/v1';
+
+  if (localStorage.getItem('jf_token')) window.location.href = 'dashboard.html';
+
+  function togglePw() {
+    const inp = document.getElementById('password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+    document.getElementById('eyeIcon').style.opacity = inp.type === 'text' ? '.4' : '1';
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn      = document.getElementById('loginBtn');
+    document.getElementById('errorBox').style.display = 'none';
+
+    if (!email || !password) { showError('Please fill in all fields.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Signing in…';
+
+    try {
+      // POST /api/v1/auth/login
+      // Response: { success: true, token: "..." }
+      const res = await fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.msg || data.message || 'Invalid credentials');
+
+      localStorage.setItem('jf_token', data.token);
+
+      // GET /api/v1/auth/me
+      // Response: { success: true, data: { _id, name, email, telephone_number, role } }
+      const meRes = await fetch(`${API_BASE}/auth/me`, {
+        headers: { 'Authorization': `Bearer ${data.token}` },
+      });
+      const me = await meRes.json();
+      if (me.success && me.data) localStorage.setItem('jf_user', JSON.stringify(me.data));
+
+      window.location.href = 'dashboard.html';
+    } catch (err) {
+      showError(err.message);
+      btn.disabled = false;
+      btn.innerHTML = 'Sign In <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    }
+  });
+
+  function showError(msg) {
+    const box = document.getElementById('errorBox');
+    box.textContent = msg; box.style.display = 'block';
+  }
+</script>
+</body>
+</html>
