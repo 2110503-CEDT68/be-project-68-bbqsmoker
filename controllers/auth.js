@@ -2,11 +2,10 @@ const User = require('../models/User');
 
 exports.register = async (req, res, next) => {
     try{
-        // 1. เพิ่ม telephone_number ที่รับมาจาก req.body
         const {name, telephone_number, email, password, role} = req.body; 
         const user = await User.create({
             name,
-            telephone_number, // 2. บันทึกลง Database
+            telephone_number,
             email,
             password,
             role 
