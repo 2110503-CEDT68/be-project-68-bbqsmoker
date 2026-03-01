@@ -39,7 +39,7 @@ exports.getBookings = async (req, res, next) => {
 //@access Public
 // @desc    Get single booking
 // @route   GET /api/v1/bookings/:id
-// @access  Private (เปลี่ยนจาก Public เป็น Private เพราะต้องเช็คสิทธิ์)
+// @access  
 exports.getBooking = async (req, res, next) => {
     try {
         const booking = await Booking.findById(req.params.id).populate({
@@ -51,8 +51,6 @@ exports.getBooking = async (req, res, next) => {
             return res.status(404).json({ success: false, message: `No booking with the id of ${req.params.id}` });
         }
 
-        // 🔒 เพิ่มลอจิกอุดช่องโหว่: ตรวจสอบความเป็นเจ้าของ (Ownership Check)
-        // ถ้าไม่ใช่คนจอง (เจ้าของ) และ ไม่ใช่ Admin ให้เตะออกทันที
         if (booking.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ 
                 success: false, 
@@ -150,6 +148,24 @@ exports.updateBooking = async (req, res, next) => {
           success: false,
           message: `User ${req.user.id} is not authorized to update this booking`,
         });
+    }
+    // Validate bookingDate range if provided
+    if (req.body.bookingDate) {
+      if (isNaN(Date.parse(req.body.bookingDate))) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid booking date format. Please provide a valid ISO 8601 date string.',
+        });
+      }
+      const bookingDate = new Date(req.body.bookingDate);
+      const minDate = new Date('2022-05-10T00:00:00Z');
+      const maxDate = new Date('2022-05-13T23:59:59Z');
+      if (bookingDate < minDate || bookingDate > maxDate) {
+        return res.status(400).json({
+          success: false,
+          message: 'Booking date must be between May 10th and May 13th, 2022',
+        });
+      }
     }
     booking = await Booking.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
