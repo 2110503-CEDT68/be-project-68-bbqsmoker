@@ -225,6 +225,16 @@ nav {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── ADMIN USER TAG */
+.b-tag-user {
+  background: #FFF0EC;
+  color: var(--accent);
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-weight: 500;
+}
+.b-tag-user svg { stroke: var(--accent); }
+
 /* ── EDIT DATE MODAL FIELD */
 .modal-date-field { margin: 16px 0; }
 .modal-date-field label { font-size: .8rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 6px; }

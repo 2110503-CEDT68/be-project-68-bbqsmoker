@@ -119,6 +119,16 @@ function renderBookings(bookings) {
               </div>
 
               <div class="b-meta">
+                <!-- User who booked -->
+                ${(b.user?.name || b.user?.email) ? `
+                  <span class="b-tag b-tag-user" title="Booked by">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    ${b.user.name || b.user.email}
+                  </span>` : ''}
+
                 <!-- Date tag → clickable to edit -->
                 <span class="b-tag b-tag-date" onclick="openEditModal('${b._id}', '${safeName}', '${(b.bookingDate||'').slice(0,10)}')"
                       title="Click to change date" style="cursor:pointer">
@@ -246,6 +256,7 @@ function openDetailModal(bookingId) {
     websiteHref ? { icon: '🌐', label: 'Website',
       val: `<a href="${websiteHref}" target="_blank" style="color:var(--accent);text-decoration:none">${website}</a>` } : null,
     { icon: '📅', label: 'Booked Date', val: `<strong>${formatDate(b.bookingDate)}</strong>` },
+    (b.user?.name || b.user?.email) ? { icon: '👤', label: 'Booked By', val: b.user.name || b.user.email } : null,
   ].filter(Boolean);
 
   document.getElementById('detailBody').innerHTML = rows.map(r => `
@@ -315,6 +326,8 @@ async function loadBookings() {
   try {
     const res = await apiFetch('GET', '/bookings');
     const bookings = res?.data || [];
+    // DEBUG: เช็ค structure จริงจาก API
+    console.log('[DEBUG] raw bookings:', JSON.stringify(bookings.slice(0,1), null, 2));
     renderBookings(Array.isArray(bookings) ? bookings : []);
   } catch (err) {
     document.getElementById('bookingsList').innerHTML = `

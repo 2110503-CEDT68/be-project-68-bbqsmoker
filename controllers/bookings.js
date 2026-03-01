@@ -9,6 +9,9 @@ exports.getBookings = async (req, res, next) => {
         query = Booking.find({ user: req.user.id }).populate({
             path: 'company',
             select: 'name address telephone_number website description'
+        }).populate({
+            path: 'user',
+            select: 'name email'
         });
     } else{
         if(req.params.id){
@@ -16,11 +19,17 @@ exports.getBookings = async (req, res, next) => {
             query = Booking.find({ company: req.params.id }).populate({
                 path: 'company',
                 select: 'name address telephone_number website description'
+            }).populate({
+                path: 'user',
+                select: 'name email'
             });
         } else {
             query = Booking.find().populate({ 
                 path: 'company',   
                 select: 'name address telephone_number website description'
+            }).populate({
+                path: 'user',
+                select: 'name email'
             });
         }
     }
@@ -45,6 +54,9 @@ exports.getBooking = async (req, res, next) => {
         const booking = await Booking.findById(req.params.id).populate({
             path: "company",
             select: "name address telephone_number website description",
+        }).populate({
+            path: "user",
+            select: "name email",
         });
 
         if (!booking) {
