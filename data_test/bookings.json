@@ -2,301 +2,301 @@
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 3,
-    "companyIndex": 0
+    "company_id": 0
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 3,
-    "companyIndex": 1
+    "company_id": 1
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 3,
-    "companyIndex": 2
+    "company_id": 2
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 4,
-    "companyIndex": 3
+    "company_id": 3
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 4,
-    "companyIndex": 4
+    "company_id": 4
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 4,
-    "companyIndex": 5
+    "company_id": 5
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 5,
-    "companyIndex": 6
+    "company_id": 6
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 5,
-    "companyIndex": 7
+    "company_id": 7
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 5,
-    "companyIndex": 8
+    "company_id": 8
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 6,
-    "companyIndex": 9
+    "company_id": 9
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 6,
-    "companyIndex": 10
+    "company_id": 10
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 6,
-    "companyIndex": 11
+    "company_id": 11
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 7,
-    "companyIndex": 12
+    "company_id": 12
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 7,
-    "companyIndex": 13
+    "company_id": 13
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 7,
-    "companyIndex": 14
+    "company_id": 14
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 8,
-    "companyIndex": 15
+    "company_id": 15
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 8,
-    "companyIndex": 16
+    "company_id": 16
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 8,
-    "companyIndex": 17
+    "company_id": 17
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 9,
-    "companyIndex": 18
+    "company_id": 18
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 9,
-    "companyIndex": 19
+    "company_id": 19
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 9,
-    "companyIndex": 20
+    "company_id": 20
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 10,
-    "companyIndex": 21
+    "company_id": 21
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 10,
-    "companyIndex": 22
+    "company_id": 22
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 10,
-    "companyIndex": 23
+    "company_id": 23
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 11,
-    "companyIndex": 24
+    "company_id": 24
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 11,
-    "companyIndex": 25
+    "company_id": 25
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 11,
-    "companyIndex": 26
+    "company_id": 26
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 12,
-    "companyIndex": 27
+    "company_id": 27
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 12,
-    "companyIndex": 28
+    "company_id": 28
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 12,
-    "companyIndex": 29
+    "company_id": 29
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 13,
-    "companyIndex": 30
+    "company_id": 30
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 13,
-    "companyIndex": 31
+    "company_id": 31
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 13,
-    "companyIndex": 32
+    "company_id": 32
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 14,
-    "companyIndex": 33
+    "company_id": 33
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 14,
-    "companyIndex": 34
+    "company_id": 34
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 14,
-    "companyIndex": 35
+    "company_id": 35
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 15,
-    "companyIndex": 36
+    "company_id": 36
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 15,
-    "companyIndex": 37
+    "company_id": 37
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 15,
-    "companyIndex": 38
+    "company_id": 38
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 16,
-    "companyIndex": 39
+    "company_id": 39
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 16,
-    "companyIndex": 40
+    "company_id": 40
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 16,
-    "companyIndex": 41
+    "company_id": 41
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 17,
-    "companyIndex": 42
+    "company_id": 42
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 17,
-    "companyIndex": 43
+    "company_id": 43
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 17,
-    "companyIndex": 44
+    "company_id": 44
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 18,
-    "companyIndex": 45
+    "company_id": 45
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 18,
-    "companyIndex": 46
+    "company_id": 46
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 18,
-    "companyIndex": 47
+    "company_id": 47
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 19,
-    "companyIndex": 48
+    "company_id": 48
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 19,
-    "companyIndex": 49
+    "company_id": 49
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 19,
-    "companyIndex": 50
+    "company_id": 50
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 20,
-    "companyIndex": 51
+    "company_id": 51
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 20,
-    "companyIndex": 52
+    "company_id": 52
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 20,
-    "companyIndex": 53
+    "company_id": 53
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 21,
-    "companyIndex": 54
+    "company_id": 54
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 21,
-    "companyIndex": 0
+    "company_id": 0
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 21,
-    "companyIndex": 1
+    "company_id": 1
   },
   {
     "bookingDate": "2022-05-10T10:00:00.000Z",
     "userIndex": 22,
-    "companyIndex": 2
+    "company_id": 2
   },
   {
     "bookingDate": "2022-05-11T10:00:00.000Z",
     "userIndex": 22,
-    "companyIndex": 3
+    "company_id": 3
   },
   {
     "bookingDate": "2022-05-12T10:00:00.000Z",
     "userIndex": 22,
-    "companyIndex": 4
+    "company_id": 4
   }
 ]

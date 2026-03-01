@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-// 1. สร้างข้อมูล Users (3 Admins + 20 Users)
+// Create users data (3 Admins + 20 Users)
 const users = [
   { "name": "Main Administrator", "telephone_number": "0815559999", "email": "admin@gmail.com", "password": "12345678", "role": "admin" },
   { "name": "System Supervisor", "telephone_number": "0812223333", "email": "supervisor@vacq.io", "password": "Sup3r!Visor_2026", "role": "admin" },
@@ -27,7 +27,7 @@ const users = [
   { "name": "Peter Parker", "telephone_number": "0829991111", "email": "p.parker@dailybugle.com", "password": "Spidey_Parker_11", "role": "user" }
 ];
 
-// 2. สร้างข้อมูล Companies (55 แห่ง)
+// Create companies data (55 companies)
 const companyNames = [
   "CyberCore", "HealthVibe", "GreenLeaf", "BlueOcean", "FinFlow", "Stellar", "BaanSabai", "UrbanMove", "DeepMind", "CreativeHive",
   "Quantum", "BioPure", "NovaEd", "SonicAudio", "Zenith", "Titan", "EcoSystems", "NanoLab", "Spark", "Orbit",
@@ -45,22 +45,21 @@ const companies = companyNames.map((name, i) => ({
   telephone_number: `02${(1000000 + i).toString()}`
 }));
 
-// 3. สร้างข้อมูล Bookings (60 รายการ)
+// Create bookings data (60 entries)
 const bookings = [];
-// --- แก้ไขส่วนนี้ใน generate_data.js ---
+
 for (let i = 0; i < 20; i++) {
   for (let j = 0; j < 3; j++) {
-    // ปรับ % 3 เพื่อให้วนแค่วันที่ 10, 11, 12 (เลี่ยงวันที่ 13 ที่อาจติด Max validation)
-    const day = 10 + (bookings.length % 3); 
+    const day = 10 + (bookings.length % 3);
     bookings.push({
       bookingDate: `2022-05-${day}T10:00:00.000Z`,
       userIndex: i + 3,
-      companyIndex: bookings.length % 55
+      company_id: bookings.length % 55
     });
   }
 }
 
-// บันทึกไฟล์
+// Save to JSON files
 fs.writeFileSync('users.json', JSON.stringify(users, null, 2));
 fs.writeFileSync('companies.json', JSON.stringify(companies, null, 2));
 fs.writeFileSync('bookings.json', JSON.stringify(bookings, null, 2));
