@@ -74,11 +74,16 @@ exports.getCompany = async (req, res, next) => {
 // @route POST /api/v1/companies
 // @access Private
 exports.createCompany = async (req, res, next) => {
-    const company = await Company.create(req.body);
-    res.status(201).json({
-        success: true,
-        data: company
-    });
+    try {
+        const company = await Company.create(req.body);
+        res.status(201).json({
+            success: true,
+            data: company
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(400).json({ success: false, message: err.message });
+    }
 };
 
 // @desc Update company
@@ -105,7 +110,6 @@ exports.updateCompany = async (req, res, next) => {
 // @access Private
 exports.deleteCompany = async (req, res, next) => {
     try {
-        // 1. ค้นหาบริษัทก่อน เพื่อตรวจสอบว่ามีอยู่จริงหรือไม่
         const company = await Company.findById(req.params.id);
 
         if (!company) {
