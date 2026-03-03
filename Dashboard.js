@@ -15,7 +15,7 @@ if (user) document.getElementById('userName').textContent = user.name || user.em
 let allBookings = [];
 let pendingCancelId   = null;
 let pendingCancelBtn  = null;
-let pendingEditId     = null;   // booking _id
+let pendingEditId     = null;   
 let pendingEditCompany = '';
 
 // ── Auth helper
@@ -37,7 +37,6 @@ async function apiFetch(method, path, body = null) {
   return data;
 }
 
-// ── Toast
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -45,35 +44,64 @@ function showToast(msg, type = '') {
   setTimeout(() => t.className = 'toast', 3200);
 }
 
-// ── Format date  (YYYY-MM-DD → "10 May 2022", avoids timezone shift)
+// ── Generate Time Options (09:00 - 17:00)
+function populateTimeOptions(selectElementId) {
+  const select = document.getElementById(selectElementId);
+  if (!select) return;
+  
+  let options = '';
+  for (let h = 9; h <= 17; h++) {
+    const hrStr = h.toString().padStart(2, '0');
+    options += `<option value="${hrStr}:00">${hrStr}:00</option>`;
+    if (h !== 17) {
+      options += `<option value="${hrStr}:30">${hrStr}:30</option>`;
+    }
+  }
+  select.innerHTML = options;
+}
+
+// ── Format date
 function formatDate(iso) {
   if (!iso) return 'TBD';
   try {
-    const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
-    return new Date(y, m - 1, d).toLocaleDateString('en-GB', {
+    const datePart = iso.slice(0, 10);
+    const timePart = iso.length >= 16 ? iso.slice(11, 16) : ''; 
+    
+    const [y, m, d] = datePart.split('-').map(Number);
+    const dateStr = new Date(y, m - 1, d).toLocaleDateString('en-GB', {
       day: 'numeric', month: 'short', year: 'numeric'
     });
+    
+    return timePart ? `${dateStr}, ${timePart}` : dateStr;
   } catch { return iso; }
 }
 
 // ── Update "Book a Company" button
 function updateBookButton(count) {
-  const bookBtn = document.getElementById('bookMoreBtn');
-  if (!bookBtn) return;
-  if (count >= MAX_BOOKINGS) {
-    bookBtn.classList.add('disabled');
-    bookBtn.setAttribute('title', 'Maximum 3 bookings reached');
-    bookBtn.removeAttribute('href');
-  } else {
-    bookBtn.classList.remove('disabled');
-    bookBtn.setAttribute('href', 'book-company.html');
-    bookBtn.removeAttribute('title');
-  }
+  const bookBtns = document.querySelectorAll('#bookMoreBtn');
+  
+  bookBtns.forEach(btn => {
+    btn.classList.remove('disabled');
+    btn.setAttribute('href', 'book-company.html');
+    btn.removeAttribute('title');
+    
+    if (count >= MAX_BOOKINGS) {
+      if (btn.innerHTML.includes('Book Company')) {
+        btn.innerHTML = btn.innerHTML.replace('Book Company', 'View Companies');
+      }
+      if (btn.innerHTML.includes('Book a Company')) {
+        btn.innerHTML = btn.innerHTML.replace('Book a Company', 'View Companies');
+      }
+    } else {
+      if (btn.classList.contains('btn-nav')) {
+        btn.innerHTML = btn.innerHTML.replace('View Companies', 'Book Company');
+      } else {
+        btn.innerHTML = btn.innerHTML.replace('View Companies', 'Book a Company');
+      }
+    }
+  });
 }
 
-// ══════════════════════════════════════════
-//  RENDER BOOKINGS
-// ══════════════════════════════════════════
 function renderBookings(bookings) {
   allBookings = bookings;
   const count = bookings.length;
@@ -100,6 +128,7 @@ function renderBookings(bookings) {
       const websiteHref = website
         ? (website.startsWith('http') ? website : 'https://' + website) : '#';
       const safeName = (company.name || '').replace(/'/g, "\\'");
+      const fullIsoDate = b.bookingDate || '';
 
       return `
         <div class="booking-card" style="animation-delay:${i * .07}s">
@@ -107,7 +136,6 @@ function renderBookings(bookings) {
             <div class="booking-number">${i + 1}</div>
             <div style="flex:1;min-width:0">
 
-              <!-- Company name → clickable -->
               <div class="b-company b-company-link" onclick="openDetailModal('${b._id}')"
                    title="View company details">
                 ${company.name || 'Unknown Company'}
@@ -119,7 +147,6 @@ function renderBookings(bookings) {
               </div>
 
               <div class="b-meta">
-                <!-- User who booked -->
                 ${(b.user?.name || b.user?.email) ? `
                   <span class="b-tag b-tag-user" title="Booked by">
                     <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -129,8 +156,7 @@ function renderBookings(bookings) {
                     ${b.user.name || b.user.email}
                   </span>` : ''}
 
-                <!-- Date tag → clickable to edit -->
-                <span class="b-tag b-tag-date" onclick="openEditModal('${b._id}', '${safeName}', '${(b.bookingDate||'').slice(0,10)}')"
+                <span class="b-tag b-tag-date" onclick="openEditModal('${b._id}', '${safeName}', '${fullIsoDate}')"
                       title="Click to change date" style="cursor:pointer">
                   <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <rect x="3" y="4" width="18" height="18" rx="2"/>
@@ -170,7 +196,7 @@ function renderBookings(bookings) {
           </div>
 
           <div class="b-actions">
-            <button class="btn-edit-date" onclick="openEditModal('${b._id}','${safeName}','${(b.bookingDate||'').slice(0,10)}')">
+            <button class="btn-edit-date" onclick="openEditModal('${b._id}','${safeName}','${fullIsoDate}')">
               ✏️ Edit Date
             </button>
             <button class="btn-cancel"
@@ -183,14 +209,16 @@ function renderBookings(bookings) {
     `</div>`;
 }
 
-// ══════════════════════════════════════════
-//  EDIT DATE MODAL
-// ══════════════════════════════════════════
-function openEditModal(bookingId, companyName, currentDate) {
+function openEditModal(bookingId, companyName, currentIso) {
   pendingEditId      = bookingId;
   pendingEditCompany = companyName;
   document.getElementById('editModalCompany').textContent = companyName;
-  document.getElementById('editDateInput').value = currentDate || '2022-05-10';
+  
+  const dVal = currentIso ? currentIso.slice(0, 10) : '2022-05-10';
+  const tVal = (currentIso && currentIso.length >= 16) ? currentIso.slice(11, 16) : '09:00';
+  
+  document.getElementById('editDateInput').value = dVal;
+  document.getElementById('editTimeInput').value = tVal;
   document.getElementById('editModalOverlay').classList.add('open');
 }
 
@@ -202,24 +230,34 @@ function closeEditModal() {
 async function confirmEdit() {
   if (!pendingEditId) return;
 
-  const newDate = document.getElementById('editDateInput').value;
-  if (!newDate) { showToast('Please select a date.', 'error'); return; }
+  const dateVal = document.getElementById('editDateInput').value;
+  const timeVal = document.getElementById('editTimeInput').value;
+  
+  if (!dateVal || !timeVal) { showToast('Please select both date and time.', 'error'); return; }
 
-  const [y, m, d] = newDate.split('-').map(Number);
+  const [y, m, d] = dateVal.split('-').map(Number);
   const dateObj = new Date(y, m - 1, d);
   if (dateObj < new Date(2022, 4, 10) || dateObj > new Date(2022, 4, 13)) {
     showToast('Date must be between May 10-13, 2022.', 'error');
     return;
   }
 
+  const [h, min] = timeVal.split(':').map(Number);
+  if (h < 9 || h > 17 || (h === 17 && min > 0)) {
+    showToast('Time must be between 09:00 and 17:00.', 'error'); 
+    return;
+  }
+
+  const newFullDate = `${dateVal}T${timeVal}:00`;
+
   const btn = document.getElementById('confirmEditBtn');
   btn.disabled = true;
   btn.textContent = 'Saving…';
 
   try {
-    await apiFetch('PUT', `/bookings/${pendingEditId}`, { bookingDate: newDate });
+    await apiFetch('PUT', `/bookings/${pendingEditId}`, { bookingDate: newFullDate });
     closeEditModal();
-    showToast(`✅ Date updated to ${formatDate(newDate)}!`, 'success');
+    showToast(`✅ Date updated to ${formatDate(newFullDate)}!`, 'success');
     loadBookings();
   } catch (err) {
     showToast(`❌ ${err.message}`, 'error');
@@ -233,9 +271,6 @@ document.getElementById('editModalOverlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('editModalOverlay')) closeEditModal();
 });
 
-// ══════════════════════════════════════════
-//  COMPANY DETAIL MODAL
-// ══════════════════════════════════════════
 function openDetailModal(bookingId) {
   const b = allBookings.find(x => x._id === bookingId);
   if (!b) return;
@@ -279,9 +314,6 @@ document.getElementById('detailModalOverlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('detailModalOverlay')) closeDetailModal();
 });
 
-// ══════════════════════════════════════════
-//  CANCEL MODAL
-// ══════════════════════════════════════════
 function openCancelModal(id, companyName, btn) {
   pendingCancelId  = id;
   pendingCancelBtn = btn;
@@ -319,15 +351,12 @@ document.getElementById('cancelModalOverlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('cancelModalOverlay')) closeCancelModal();
 });
 
-// ── Load bookings
 async function loadBookings() {
   document.getElementById('bookingsList').innerHTML =
     '<div class="skeleton sk-card"></div><div class="skeleton sk-card"></div>';
   try {
     const res = await apiFetch('GET', '/bookings');
     const bookings = res?.data || [];
-    // DEBUG: เช็ค structure จริงจาก API
-    console.log('[DEBUG] raw bookings:', JSON.stringify(bookings.slice(0,1), null, 2));
     renderBookings(Array.isArray(bookings) ? bookings : []);
   } catch (err) {
     document.getElementById('bookingsList').innerHTML = `
@@ -339,4 +368,6 @@ async function loadBookings() {
   }
 }
 
+// ── Init
+populateTimeOptions('editTimeInput');
 loadBookings();

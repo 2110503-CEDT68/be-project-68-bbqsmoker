@@ -13,10 +13,10 @@ if (user) document.getElementById('userName').textContent = user.name || user.em
 // ── State
 const LOGOS = ['🏢','💼','🚀','⚡','🌐','🏦','🔬','🎯','🛠','📦','🖥','🎨'];
 let allCompanies     = [];
-let bookedCompanyIds = new Set();   // Set of company IDs that are booked
-let bookingMap       = {};          // companyId → { bookingId, bookingDate }
+let bookedCompanyIds = new Set();   
+let bookingMap       = {};          
 let pendingCompany   = null;
-let editMode         = false;       // true = editing existing booking date
+let editMode         = false;       
 
 // ── Auth helpers
 function logout() {
@@ -40,12 +40,27 @@ async function apiFetch(method, path, body = null) {
   return data;
 }
 
-// ── Toast
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'toast show ' + type;
   setTimeout(() => t.className = 'toast', 3500);
+}
+
+// ── Generate Time Options (09:00 - 17:00)
+function populateTimeOptions(selectElementId) {
+  const select = document.getElementById(selectElementId);
+  if (!select) return;
+  
+  let options = '';
+  for (let h = 9; h <= 17; h++) {
+    const hrStr = h.toString().padStart(2, '0');
+    options += `<option value="${hrStr}:00">${hrStr}:00</option>`;
+    if (h !== 17) {
+      options += `<option value="${hrStr}:30">${hrStr}:30</option>`;
+    }
+  }
+  select.innerHTML = options;
 }
 
 // ── Load companies + existing bookings
@@ -70,7 +85,7 @@ async function loadData() {
           bookedCompanyIds.add(cid);
           bookingMap[cid] = {
             bookingId:   b._id || b.id,
-            bookingDate: (b.bookingDate || '').slice(0, 10), // YYYY-MM-DD
+            bookingDate: b.bookingDate || '',
           };
         }
       });
@@ -113,13 +128,18 @@ function renderCompanies(list) {
       ? (website.startsWith('http') ? website : 'https://' + website)
       : '#';
 
-    // Footer button logic
     let footerBtn;
     if (isBooked) {
       const info = bookingMap[id] || {};
-      const dateLabel = info.bookingDate
-        ? new Date(...info.bookingDate.split('-').map((v,i)=>i===1?Number(v)-1:Number(v))).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})
-        : '';
+      let dateLabel = '';
+      if (info.bookingDate) {
+        const dStr = info.bookingDate.slice(0, 10);
+        const tStr = info.bookingDate.length >= 16 ? info.bookingDate.slice(11, 16) : '';
+        const [y, m, d] = dStr.split('-').map(Number);
+        const formattedDate = new Date(y, m - 1, d).toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
+        dateLabel = tStr ? `${formattedDate}, ${tStr}` : formattedDate;
+      }
+      
       footerBtn = `
         <div style="display:flex;align-items:center;gap:8px;margin-top:auto;width:100%;justify-content:space-between;padding-top:4px;border-top:1px solid var(--border)">
           <span class="btn-booked">✓ Booked${dateLabel ? ' · ' + dateLabel : ''}</span>
@@ -167,13 +187,11 @@ function renderCompanies(list) {
               <a href="${websiteHref}" target="_blank">${website}</a>
             </div>` : ''}
         </div>
-
         ${footerBtn}
       </div>`;
   }).join('');
 }
 
-// ── Search filter
 function filterCompanies() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   const filtered = !q ? allCompanies : allCompanies.filter(c =>
@@ -184,12 +202,10 @@ function filterCompanies() {
   renderCompanies(filtered);
 }
 
-// ── Open NEW booking modal
 function openModal(companyId) {
   const c = allCompanies.find(x => String(x._id || x.id) === String(companyId));
   if (!c) return;
 
-  // Extra guard: ถ้าจองครบแล้ว ไม่ให้เปิด modal
   if (bookedCompanyIds.size >= MAX_BOOKINGS) {
     showToast('You have reached the 3-booking limit.', 'error');
     return;
@@ -203,16 +219,15 @@ function openModal(companyId) {
   document.getElementById('mWebsite').textContent = c.website          || '--';
   document.getElementById('mTel').textContent     = c.telephone_number || '--';
   document.getElementById('bookingDateInput').value = '2022-05-10';
+  document.getElementById('bookingTimeInput').value = '09:00'; 
 
-  // Modal title
   document.querySelector('#modalOverlay .modal h3').textContent = 'Confirm Booking';
-  document.querySelector('#modalOverlay .modal-sub').textContent = 'Choose your interview date below.';
+  document.querySelector('#modalOverlay .modal-sub').textContent = 'Choose your interview date and time below.';
   document.getElementById('confirmBtn').textContent = 'Confirm Booking';
 
   document.getElementById('modalOverlay').classList.add('open');
 }
 
-// ── Open EDIT date modal
 function openEditModal(companyId) {
   const c = allCompanies.find(x => String(x._id || x.id) === String(companyId));
   if (!c) return;
@@ -221,42 +236,42 @@ function openEditModal(companyId) {
   pendingCompany = c;
 
   const info = bookingMap[String(companyId)] || {};
+  const fullIso = info.bookingDate || '';
 
   document.getElementById('mCompany').textContent = c.name             || '--';
   document.getElementById('mAddress').textContent = c.address          || '--';
   document.getElementById('mWebsite').textContent = c.website          || '--';
   document.getElementById('mTel').textContent     = c.telephone_number || '--';
-  document.getElementById('bookingDateInput').value = info.bookingDate || '2022-05-10';
+  
+  document.getElementById('bookingDateInput').value = fullIso.slice(0, 10) || '2022-05-10';
+  document.getElementById('bookingTimeInput').value = fullIso.length >= 16 ? fullIso.slice(11, 16) : '09:00';
 
-  // Modal title
   document.querySelector('#modalOverlay .modal h3').textContent = 'Edit Booking Date';
-  document.querySelector('#modalOverlay .modal-sub').textContent = 'Update your preferred interview date.';
+  document.querySelector('#modalOverlay .modal-sub').textContent = 'Update your preferred interview date and time.';
   document.getElementById('confirmBtn').textContent = 'Save Changes';
 
   document.getElementById('modalOverlay').classList.add('open');
 }
 
-// ── Close booking modal
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('open');
   pendingCompany = null;
   editMode = false;
 }
 
-// Close on backdrop click
 document.getElementById('modalOverlay').addEventListener('click', (e) => {
   if (e.target === document.getElementById('modalOverlay')) closeModal();
 });
 
-// ── Confirm booking (new or edit)
 async function confirmBooking() {
   if (!pendingCompany) return;
 
-  const bookingDate = document.getElementById('bookingDateInput').value;
-  if (!bookingDate) { showToast('Please select a booking date.', 'error'); return; }
+  const dateVal = document.getElementById('bookingDateInput').value;
+  const timeVal = document.getElementById('bookingTimeInput').value;
+  
+  if (!dateVal || !timeVal) { showToast('Please select both date and time.', 'error'); return; }
 
-  // Validate date range
-  const [y, m, d] = bookingDate.split('-').map(Number);
+  const [y, m, d] = dateVal.split('-').map(Number);
   const dateObj = new Date(y, m - 1, d);
   const minDate = new Date(2022, 4, 10);
   const maxDate = new Date(2022, 4, 13);
@@ -264,6 +279,14 @@ async function confirmBooking() {
     showToast('Date must be between May 10-13, 2022.', 'error');
     return;
   }
+
+  const [h, min] = timeVal.split(':').map(Number);
+  if (h < 9 || h > 17 || (h === 17 && min > 0)) {
+    showToast('Time must be between 09:00 and 17:00.', 'error');
+    return;
+  }
+
+  const bookingDate = `${dateVal}T${timeVal}:00`;
 
   const btn = document.getElementById('confirmBtn');
   btn.disabled = true;
@@ -273,19 +296,21 @@ async function confirmBooking() {
     const companyId = String(pendingCompany._id || pendingCompany.id);
 
     if (editMode) {
-      // ── PUT /api/v1/bookings/:bookingId  (update date)
       const info = bookingMap[companyId];
       if (!info?.bookingId) throw new Error('Booking record not found.');
       await apiFetch('PUT', `/bookings/${info.bookingId}`, { bookingDate });
       bookingMap[companyId].bookingDate = bookingDate;
-      showToast(`Updated booking for ${pendingCompany.name} to ${bookingDate}!`, 'success');
+      
+      const dStr = new Date(y, m - 1, d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      showToast(`Updated booking for ${pendingCompany.name} to ${dStr}, ${timeVal}!`, 'success');
     } else {
-      // ── POST /api/v1/companies/:companyId/bookings  (new booking)
       const result = await apiFetch('POST', `/companies/${companyId}/bookings`, { bookingDate });
       const newBookingId = result?.data?._id || result?.data?.id || null;
       bookedCompanyIds.add(companyId);
       bookingMap[companyId] = { bookingId: newBookingId, bookingDate };
-      showToast(`Booked ${pendingCompany.name} on ${bookingDate} successfully!`, 'success');
+      
+      const dStr = new Date(y, m - 1, d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      showToast(`Booked ${pendingCompany.name} on ${dStr}, ${timeVal} successfully!`, 'success');
     }
 
     closeModal();
@@ -293,7 +318,6 @@ async function confirmBooking() {
 
   } catch (err) {
     const msg = err.message || '';
-    // Catch limit errors from server (fallback safety net)
     if (!editMode && (msg.includes('already made 3') || msg.toLowerCase().includes('limit') || msg.includes('3 bookings'))) {
       showToast('You have reached the 3-booking limit.', 'error');
       closeModal();
@@ -308,4 +332,5 @@ async function confirmBooking() {
 }
 
 // ── Init
+populateTimeOptions('bookingTimeInput');
 loadData();

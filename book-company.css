@@ -173,10 +173,35 @@ nav {
 .detail-row .key { color: var(--muted); flex-shrink: 0; }
 .detail-row .val { font-weight: 500; text-align: right; }
 
-/* Date field in modal */
-.modal-date-field          { margin-bottom: 20px; }
-.modal-date-field label    { font-size: .8rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 6px; }
-.date-hint                 { font-size: .75rem; color: var(--muted); margin-top: 5px; }
+/* ── MODAL INPUTS ── */
+.modal-date-field label { font-size: .8rem; font-weight: 500; color: var(--text); display: block; margin-bottom: 6px; }
+.date-hint { font-size: .75rem; color: var(--muted); margin-top: 5px; }
+
+.modal-input {
+  font-family: 'DM Sans', sans-serif;
+  font-size: .9rem;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  box-sizing: border-box;
+}
+.modal-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200,80,42,.12);
+}
+select.modal-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2214%22%20height%3D%2214%22%20fill%3D%22none%22%20stroke%3D%22%237C7570%22%20stroke-width%3D%222%22%20viewBox%3D%220%200%24%2024%22%3E%3Cpath%20d%3D%22M6%209l6%206%206-6%22/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
 
 .modal-actions { display: flex; gap: 10px; }
 .btn-modal-cancel {

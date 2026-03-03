@@ -10,7 +10,6 @@
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <a class="nav-brand" href="dashboard.html">
     <div class="brand-dot"></div>
@@ -28,7 +27,6 @@
   </div>
 </nav>
 
-<!-- MAIN -->
 <div class="container">
   <div class="page-header">
     <h1>Book a Company</h1>
@@ -59,11 +57,10 @@
   </div>
 </div>
 
-<!-- BOOKING MODAL -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h3>Confirm Booking</h3>
-    <p class="modal-sub">Choose your interview date below.</p>
+    <p class="modal-sub">Choose your interview date and time below.</p>
 
     <div class="modal-detail">
       <div class="detail-row"><span class="key">Company</span><span class="val" id="mCompany">--</span></div>
@@ -72,11 +69,18 @@
       <div class="detail-row"><span class="key">Tel.</span><span class="val" id="mTel">--</span></div>
     </div>
 
-    <div class="modal-date-field">
-      <label for="bookingDateInput">Interview Date <span style="color:var(--accent)">*</span></label>
-      <input type="date" id="bookingDateInput" min="2022-05-10" max="2022-05-13" value="2022-05-10" />
-      <div class="date-hint">Must be between May 10 and May 13, 2022</div>
+    <div class="modal-date-field" style="display: flex; gap: 12px; margin-bottom: 20px;">
+      <div style="flex: 1;">
+        <label for="bookingDateInput">Interview Date <span style="color:var(--accent)">*</span></label>
+        <input type="date" id="bookingDateInput" class="modal-input" min="2022-05-10" max="2022-05-13" value="2022-05-10" />
+      </div>
+      <div style="flex: 1;">
+        <label for="bookingTimeInput">Time <span style="color:var(--accent)">*</span></label>
+        <select id="bookingTimeInput" class="modal-input"></select>
+      </div>
     </div>
+    
+    <div class="date-hint" style="margin-top: -10px; margin-bottom: 20px;">Must be between May 10 and May 13, 2022 (09:00 - 17:00)</div>
 
     <div class="modal-actions">
       <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
@@ -85,10 +89,8 @@
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- SCRIPTS -->
 <script src="book-company.js"></script>
 </body>
 </html>
