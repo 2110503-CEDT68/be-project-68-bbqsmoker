@@ -99,7 +99,7 @@ exports.addBooking = async (req, res, next) => {
     const minDate = new Date('2022-05-10T00:00:00Z');
     const maxDate = new Date('2022-05-13T23:59:59Z');
 
-    if (bookingDate < minDate || bookingDate > maxDate) {
+    if (bookingDate < minDate || bookingDate >= maxDate) {
       return res.status(400).json({
         success: false,
         message: 'Booking date must be between May 10th and May 13th, 2022'

@@ -5,8 +5,8 @@ const BookingSchema = new mongoose.Schema({
         type: Date,
         required: true,
         // กำหนด Constraint ช่วงเวลาตามโจทย์
-        min: ['2022-05-10', 'Booking date must be on or after May 10th, 2022'],
-        max: ['2022-05-13', 'Booking date must be on or before May 13th, 2022']
+        min: ['2022-05-10T00:00:00.000Z', 'Booking date must be on or after May 10th, 2022'],
+        max: ['2022-05-13T23:59:59.999Z', 'Booking date must be on or before May 13th, 2022']
     },
     user:{
         type: mongoose.Schema.ObjectId,

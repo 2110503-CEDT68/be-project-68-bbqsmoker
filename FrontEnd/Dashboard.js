@@ -60,19 +60,26 @@ function populateTimeOptions(selectElementId) {
   select.innerHTML = options;
 }
 
-// ── Format date
+// ── Format date (แก้ไขปัญหา Timezone)
 function formatDate(iso) {
   if (!iso) return 'TBD';
   try {
-    const datePart = iso.slice(0, 10);
-    const timePart = iso.length >= 16 ? iso.slice(11, 16) : ''; 
+    const d = new Date(iso);
+    if (isNaN(d)) return iso; // Fallback ถ้า Parse ไม่ผ่าน
     
-    const [y, m, d] = datePart.split('-').map(Number);
-    const dateStr = new Date(y, m - 1, d).toLocaleDateString('en-GB', {
+    // แปลงวันที่
+    const dateStr = d.toLocaleDateString('en-GB', {
       day: 'numeric', month: 'short', year: 'numeric'
     });
     
-    return timePart ? `${dateStr}, ${timePart}` : dateStr;
+    // ถ้ามีเวลา (ความยาว string เกิน 10) ให้แปลงเวลาแบบ Local Time
+    if (iso.length > 10) {
+      const timeStr = d.toLocaleTimeString('en-GB', {
+        hour: '2-digit', minute: '2-digit', hour12: false
+      });
+      return `${dateStr}, ${timeStr}`;
+    }
+    return dateStr;
   } catch { return iso; }
 }
 
@@ -209,13 +216,30 @@ function renderBookings(bookings) {
     `</div>`;
 }
 
+// ── แก้ไขการดึงข้อมูลเวลาเข้า Modal (Local Time)
 function openEditModal(bookingId, companyName, currentIso) {
   pendingEditId      = bookingId;
   pendingEditCompany = companyName;
   document.getElementById('editModalCompany').textContent = companyName;
   
-  const dVal = currentIso ? currentIso.slice(0, 10) : '2022-05-10';
-  const tVal = (currentIso && currentIso.length >= 16) ? currentIso.slice(11, 16) : '09:00';
+  let dVal = '2022-05-10';
+  let tVal = '09:00';
+  
+  if (currentIso && currentIso.length > 10) {
+    const d = new Date(currentIso);
+    if (!isNaN(d)) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      dVal = `${y}-${m}-${day}`;
+      
+      const hr = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      tVal = `${hr}:${min}`;
+    }
+  } else if (currentIso) {
+    dVal = currentIso.slice(0, 10);
+  }
   
   document.getElementById('editDateInput').value = dVal;
   document.getElementById('editTimeInput').value = tVal;
@@ -257,7 +281,10 @@ async function confirmEdit() {
   try {
     await apiFetch('PUT', `/bookings/${pendingEditId}`, { bookingDate: newFullDate });
     closeEditModal();
-    showToast(`✅ Date updated to ${formatDate(newFullDate)}!`, 'success');
+    // ใช้ Date Object แปลงข้อความ Success เพื่อให้สอดคล้องกับ Timezone
+    const dObj = new Date(newFullDate);
+    const successDateStr = dObj.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    showToast(`✅ Date updated to ${successDateStr}, ${timeVal}!`, 'success');
     loadBookings();
   } catch (err) {
     showToast(`❌ ${err.message}`, 'error');

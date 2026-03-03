@@ -128,16 +128,23 @@ function renderCompanies(list) {
       ? (website.startsWith('http') ? website : 'https://' + website)
       : '#';
 
+    // ── แก้ไขการคำนวณป้าย "Booked" เพื่อรองรับ Timezone
     let footerBtn;
     if (isBooked) {
       const info = bookingMap[id] || {};
       let dateLabel = '';
+      
       if (info.bookingDate) {
-        const dStr = info.bookingDate.slice(0, 10);
-        const tStr = info.bookingDate.length >= 16 ? info.bookingDate.slice(11, 16) : '';
-        const [y, m, d] = dStr.split('-').map(Number);
-        const formattedDate = new Date(y, m - 1, d).toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
-        dateLabel = tStr ? `${formattedDate}, ${tStr}` : formattedDate;
+        const d = new Date(info.bookingDate);
+        if (!isNaN(d)) {
+          const dStr = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+          if (info.bookingDate.length > 10) {
+            const tStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+            dateLabel = `${dStr}, ${tStr}`;
+          } else {
+            dateLabel = dStr;
+          }
+        }
       }
       
       footerBtn = `
@@ -228,6 +235,7 @@ function openModal(companyId) {
   document.getElementById('modalOverlay').classList.add('open');
 }
 
+// ── แก้ไขการดึงเวลาเข้า Modal เพื่อรองรับ Timezone
 function openEditModal(companyId) {
   const c = allCompanies.find(x => String(x._id || x.id) === String(companyId));
   if (!c) return;
@@ -236,15 +244,34 @@ function openEditModal(companyId) {
   pendingCompany = c;
 
   const info = bookingMap[String(companyId)] || {};
-  const fullIso = info.bookingDate || '';
+  const currentIso = info.bookingDate || '';
 
   document.getElementById('mCompany').textContent = c.name             || '--';
   document.getElementById('mAddress').textContent = c.address          || '--';
   document.getElementById('mWebsite').textContent = c.website          || '--';
   document.getElementById('mTel').textContent     = c.telephone_number || '--';
   
-  document.getElementById('bookingDateInput').value = fullIso.slice(0, 10) || '2022-05-10';
-  document.getElementById('bookingTimeInput').value = fullIso.length >= 16 ? fullIso.slice(11, 16) : '09:00';
+  let dVal = '2022-05-10';
+  let tVal = '09:00';
+  
+  if (currentIso && currentIso.length > 10) {
+    const d = new Date(currentIso);
+    if (!isNaN(d)) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      dVal = `${y}-${m}-${day}`;
+      
+      const hr = String(d.getHours()).padStart(2, '0');
+      const min = String(d.getMinutes()).padStart(2, '0');
+      tVal = `${hr}:${min}`;
+    }
+  } else if (currentIso) {
+    dVal = currentIso.slice(0, 10);
+  }
+
+  document.getElementById('bookingDateInput').value = dVal;
+  document.getElementById('bookingTimeInput').value = tVal;
 
   document.querySelector('#modalOverlay .modal h3').textContent = 'Edit Booking Date';
   document.querySelector('#modalOverlay .modal-sub').textContent = 'Update your preferred interview date and time.';
@@ -301,16 +328,18 @@ async function confirmBooking() {
       await apiFetch('PUT', `/bookings/${info.bookingId}`, { bookingDate });
       bookingMap[companyId].bookingDate = bookingDate;
       
-      const dStr = new Date(y, m - 1, d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-      showToast(`Updated booking for ${pendingCompany.name} to ${dStr}, ${timeVal}!`, 'success');
+      const dObj = new Date(bookingDate);
+      const successDateStr = dObj.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      showToast(`Updated booking for ${pendingCompany.name} to ${successDateStr}, ${timeVal}!`, 'success');
     } else {
       const result = await apiFetch('POST', `/companies/${companyId}/bookings`, { bookingDate });
       const newBookingId = result?.data?._id || result?.data?.id || null;
       bookedCompanyIds.add(companyId);
       bookingMap[companyId] = { bookingId: newBookingId, bookingDate };
       
-      const dStr = new Date(y, m - 1, d).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-      showToast(`Booked ${pendingCompany.name} on ${dStr}, ${timeVal} successfully!`, 'success');
+      const dObj = new Date(bookingDate);
+      const successDateStr = dObj.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      showToast(`Booked ${pendingCompany.name} on ${successDateStr}, ${timeVal} successfully!`, 'success');
     }
 
     closeModal();
